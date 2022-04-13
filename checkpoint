@@ -1,0 +1,2 @@
+model_checkpoint_path: "weights_from_jupyter_fitting_0413"
+all_model_checkpoint_paths: "weights_from_jupyter_fitting_0413"
