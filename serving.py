@@ -1,4 +1,9 @@
+import numpy as np
 import tensorflow as tf
+from flask import Flask, request
 
-new_model = tf.keras.models.load_model\
-    ('C:/Users/MJ/noth5_model_0413')
+load = tf.saved_model.load('model0413')
+
+print(load.summary())
+
+# 
