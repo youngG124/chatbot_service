@@ -120,7 +120,7 @@ DROPOUT = 0.1
 
 print('hello test 2')
 
-load = tf.saved_model.load('model0415_LowLevelAPI')
+load = tf.saved_model.load('0415_model_trained_with_cpu')
 
 print('hello test 3')
 

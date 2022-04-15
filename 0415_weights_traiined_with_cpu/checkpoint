@@ -1,0 +1,2 @@
+model_checkpoint_path: "0415_weights_trained_with_cpu"
+all_model_checkpoint_paths: "0415_weights_trained_with_cpu"
