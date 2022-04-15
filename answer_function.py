@@ -120,7 +120,7 @@ DROPOUT = 0.1
 
 print('hello test 2')
 
-load = tf.saved_model.load('model0413')
+load = tf.saved_model.load('model0415_LowLevelAPI')
 
 print('hello test 3')
 
@@ -145,7 +145,7 @@ def evaluate(sentence):
     output = tf.expand_dims(START_TOKEN, 0)
 
     for i in range(MAX_LENGTH):
-        predictions = model(inputs=[sentence, output], training=False)
+        predictions = load(inputs=[sentence, output], training=False)
 
         predictions = predictions[:, -1:, :]
         predicted_id = tf.cast(tf.argmax(predictions, axis=-1), tf.int32)
@@ -156,6 +156,8 @@ def evaluate(sentence):
         output = tf.concat([output, predicted_id], axis=-1)
 
     return tf.squeeze(output, axis=0)
+
+print('hello test 5')
 
 def predict(sentence):
     prediction = evaluate(sentence)
@@ -170,7 +172,11 @@ def predict(sentence):
 
     return predicted_sentence
 
+print('hello test 6')
+
 def preprocess_sentence(sentence):
     sentence = re.sub(r"([?.!,])", r" \1 ", sentence)
     sentence = sentence.strip()
     return sentence
+
+predict('약 복용에 연령제한이 있나요')
