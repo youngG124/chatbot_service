@@ -507,4 +507,4 @@ def preprocess_sentence(sentence):
 
     return sentence
 
-print(predict('치매에 좋은 음식이 뭔가요'))
+# print(predict('치매에 좋은 음식이 뭔가요'))
