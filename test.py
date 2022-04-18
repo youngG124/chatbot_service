@@ -1,14 +1,12 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-from answer_function import predict
-
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app)
 
 def makeAnswer(question) :
-    return 'hello'
+    return 'hello' + question
 
 @app.route('/')
 def default() :
