@@ -744,46 +744,34 @@ model.load_weights('./0412weights/0412weights/0412weights')
 predict('약 복용에 연령제한이 있나요')
 
 
-# # In[93]:
+# %%
 
+import sys
+# We need sudo prefix if not on a Google Colab.
+if 'google.colab' not in sys.modules:
+  SUDO_IF_NEEDED = 'sudo'
+else:
+  SUDO_IF_NEEDED = ''
 
-# from flask import Flask, jsonify
-# from flask_cors import CORS
+# %%
+from flask import Flask, jsonify
+from flask_cors import CORS
 
-# app = Flask(__name__)
-# app.config['JSON_AS_ASCII'] = False
-# CORS(app)
+app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
+CORS(app)
 
+@app.route('/')
+def default() :
+    return "답변 생성 서버입니다..."
 
-# # In[94]:
+# 질문에 대한 답변 return 하는 api
+@app.route('/<question>')
+def exportAnswer(question):
+    print(question)
+    return jsonify({"answer" : predict(question)})
 
-
-# def makeAnswer(question) :
-#     return '답변입니다.'
-
-
-# # In[95]:
-
-
-# @app.route('/')
-# def default() :
-#     return "return of default_api"
-
-
-# # In[96]:
-
-
-# @app.route('/<question>')
-# def exportAnswer(question):
-#     print(question)
-#     return jsonify({"answer" : makeAnswer(question)})
-
-
-# # In[97]:
-
-
-# if __name__ == '__main__' :
-#     app.run(debug=True, host="127.0.0.1", port=5005)
-
+if __name__ == '__main__' :
+    app.run(host="127.0.0.1", port=5005)
 
 # %%
