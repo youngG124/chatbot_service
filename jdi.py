@@ -9,10 +9,6 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 
-# In[49]:
-
-
-tf.__version__
 
 
 # In[50]:
@@ -46,7 +42,6 @@ class PositionalEncoding(tf.keras.layers.Layer):
     pos_encoding = tf.constant(angle_rads)
     pos_encoding = pos_encoding[tf.newaxis, ...]
 
-    print(pos_encoding.shape)
     return tf.cast(pos_encoding, tf.float32)
 
   def call(self, inputs):
@@ -362,21 +357,6 @@ def transformer(vocab_size, num_layers, dff,
   return tf.keras.Model(inputs=[inputs, dec_inputs], outputs=outputs, name=name)
 
 
-# In[61]:
-
-
-small_transformer = transformer(
-    vocab_size = 9000,
-    num_layers = 4,
-    dff = 512,
-    d_model = 128,
-    num_heads = 4,
-    dropout = 0.3,
-    name="small_transformer")
-
-# tf.keras.utils.plot_model(
-#     small_transformer, to_file='small_transformer.png', show_shapes=True)
-
 
 # In[62]:
 
@@ -433,17 +413,6 @@ train_data = pd.read_csv('./rectified0412.csv')
 train_data.head()
 
 
-# In[67]:
-
-
-print('챗봇 샘플의 개수 :', len(train_data))
-
-
-# In[68]:
-
-
-print(train_data.isnull().sum())
-
 
 # In[69]:
 
@@ -469,19 +438,6 @@ for sentence in train_data['A']:
     answers.append(sentence)
 
 
-# In[71]:
-
-
-len(questions)
-
-
-# In[72]:
-
-
-print(questions[:5])
-print(answers[:5])
-
-
 # In[73]:
 
 
@@ -494,14 +450,6 @@ START_TOKEN, END_TOKEN = [tokenizer.vocab_size], [tokenizer.vocab_size + 1]
 
 # 시작 토큰과 종료 토큰을 고려하여 단어 집합의 크기를 + 2
 VOCAB_SIZE = tokenizer.vocab_size + 2
-
-
-# In[74]:
-
-
-print('시작 토큰 번호 :',START_TOKEN)
-print('종료 토큰 번호 :',END_TOKEN)
-print('단어 집합의 크기 :',VOCAB_SIZE)
 
 
 # In[75]:
@@ -521,11 +469,9 @@ sample_string = questions[20]
 
 # encode() : 텍스트 시퀀스 --> 정수 시퀀스
 tokenized_string = tokenizer.encode(sample_string)
-print ('정수 인코딩 후의 문장 {}'.format(tokenized_string))
 
 # decode() : 정수 시퀀스 --> 텍스트 시퀀스
 original_string = tokenizer.decode(tokenized_string)
-print ('기존 문장: {}'.format(original_string))
 
 
 # In[77]:
@@ -569,29 +515,6 @@ def tokenize_and_filter(inputs, outputs):
 
 questions, answers = tokenize_and_filter(questions, answers)
 
-
-# In[80]:
-
-
-print('질문 데이터의 크기(shape) :', questions.shape)
-print('답변 데이터의 크기(shape) :', answers.shape)
-
-
-# In[81]:
-
-
-# 0번째 샘플을 임의로 출력
-print(questions[0])
-print(answers[0])
-
-
-# In[82]:
-
-
-print('단어 집합의 크기(Vocab size): {}'.format(VOCAB_SIZE))
-print('전체 샘플의 수(Number of samples): {}'.format(len(questions)))
-
-
 # In[83]:
 
 
@@ -615,15 +538,6 @@ dataset = dataset.cache()
 dataset = dataset.shuffle(BUFFER_SIZE)
 dataset = dataset.batch(BATCH_SIZE)
 dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
-
-
-# In[84]:
-
-
-# 임의의 샘플에 대해서 [:, :-1]과 [:, 1:]이 어떤 의미를 가지는지 테스트해본다.
-print(answers[0]) # 기존 샘플
-print(answers[:1][:, :-1]) # 마지막 패딩 토큰 제거하면서 길이가 39가 된다.
-print(answers[:1][:, 1:]) # 맨 처음 토큰이 제거된다. 다시 말해 시작 토큰이 제거된다. 길이는 역시 39가 된다.
 
 
 # In[85]:
@@ -664,16 +578,6 @@ def accuracy(y_true, y_pred):
 
 model.compile(optimizer=optimizer, loss=loss_function, metrics=[accuracy])
 
-
-# In[87]:
-
-
-# EPOCHS = 50
-
-# model.fit(dataset, epochs=EPOCHS)
-# model.load_weights('C:\\Users\\MJ\\Desktop\\인턴 김신영\\챗봇\\0412weights\\0412weights')
-
-
 # In[88]:
 
 
@@ -710,15 +614,10 @@ def predict(sentence):
   predicted_sentence = tokenizer.decode(
       [i for i in prediction if i < tokenizer.vocab_size])
 
-  # print('Input: {}'.format(sentence))
-  # print('Output: {}'.format(predicted_sentence))
-  print(predicted_sentence)
-
   return predicted_sentence
 
 
-# In[89]:
-
+# In[89]: 문장 전처리
 
 def preprocess_sentence(sentence):
   sentence = re.sub(r"([?.!,])", r" \1 ", sentence)
@@ -726,32 +625,11 @@ def preprocess_sentence(sentence):
   return sentence
 
 
-# In[90]:
-
-
-output = predict('약먹고 토했어요')
-
-
 # In[91]:
 
 
 model.load_weights('./0412weights/0412weights/0412weights')
 
-
-# In[92]:
-
-
-predict('약 복용에 연령제한이 있나요')
-
-
-# %%
-
-import sys
-# We need sudo prefix if not on a Google Colab.
-if 'google.colab' not in sys.modules:
-  SUDO_IF_NEEDED = 'sudo'
-else:
-  SUDO_IF_NEEDED = ''
 
 # %%
 from flask import Flask, jsonify
@@ -768,10 +646,7 @@ def default() :
 # 질문에 대한 답변 return 하는 api
 @app.route('/<question>')
 def exportAnswer(question):
-    print(question)
     return jsonify({"answer" : predict(question)})
 
 if __name__ == '__main__' :
     app.run(host="127.0.0.1", port=5005)
-
-# %%

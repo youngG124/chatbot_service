@@ -508,3 +508,22 @@ def preprocess_sentence(sentence):
     return sentence
 
 print(predict('약 복용시 연령제한이 있나요'))
+
+from flask import Flask, jsonify
+from flask_cors import CORS
+
+app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
+CORS(app)
+
+@app.route('/')
+def default() :
+    return "답변 생성 서버입니다..."
+
+# 질문에 대한 답변 return 하는 api
+@app.route('/<question>')
+def exportAnswer(question):
+    return jsonify({"answer" : predict(question)})
+
+if __name__ == '__main__' :
+    app.run(host="127.0.0.1", port=5006)
