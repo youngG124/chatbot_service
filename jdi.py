@@ -641,7 +641,7 @@ CORS(app)
 
 @app.route('/')
 def default() :
-    return "답변 생성 서버입니다..."
+    return "답변 생성 서버입니다.."
 
 # 질문에 대한 답변 return 하는 api
 @app.route('/<question>')
